@@ -85,6 +85,7 @@ namespace MongoRepository
         /// <returns>The Entity TModel.</returns>
         public virtual TModel GetById(ObjectId id)
         {
+          
             return this.collection.FindOneByIdAs<TModel>(id);
         }
 
