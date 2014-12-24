@@ -330,7 +330,7 @@ namespace MongoRepository
     /// <typeparam name="TModel">The type contained in the repository.</typeparam>
     /// <remarks>Entities are assumed to use strings for Id's.</remarks>
     public class MongoRepository<TModel> : MongoRepository<string, TModel>, IRepository<TModel>
-        where TModel : IEntity<string>
+       // where TModel : IEntity<string>
     {
 
         internal MongoRepository(PropertyInfo key, string collectionName)
