@@ -13,7 +13,7 @@ using System.Reflection;
 namespace MongoRepository
 {
     public class MongoRepository<TKey, TModel> : IRepository<TModel, TKey>
-        where TModel : IEntity<TKey>
+       // where TModel : IEntity<TKey>
     {
 
         public event EventHandler<ModelEventArgs<TModel>> onBeforeSave = delegate { };
@@ -26,10 +26,10 @@ namespace MongoRepository
         /// </summary>
         protected internal MongoCollection<TModel> collection;
 
-        internal MongoRepository(string keyName, string collectionName)
+        internal MongoRepository(PropertyInfo key, string collectionName)
         {
             collection = Repositories.Db.GetCollection<TModel>(collectionName);
-            this.KeyName = keyName;
+            this.Key = key;
             CollectionType = typeof(TModel);
         }
 
@@ -39,7 +39,7 @@ namespace MongoRepository
             private set;
         }
 
-        public string KeyName { get; private set; }
+        public PropertyInfo Key{ get; private set; }
 
         /// <summary>
         /// Gets the Mongo collection (to perform advanced operations).
@@ -70,12 +70,12 @@ namespace MongoRepository
         /// <returns>The Entity TModel.</returns>
         public virtual TModel GetById(TKey id)
         {
-            if (typeof(TModel).IsSubclassOf(typeof(Entity)))
-            {
+            //if (typeof(TModel).IsSubclassOf(typeof(Entity)))
+           // {
                 return this.GetById(new ObjectId(id as string));
-            }
-
-            return this.collection.FindOneByIdAs<TModel>(BsonValue.Create(id));
+            //}
+           // this.Collection.AsQueryable().FirstOrDefault(x => x.Id.Equals(id));
+            //return this.collection.FindOneByIdAs<TModel>(BsonValue.Create(id));
         }
 
         /// <summary>
@@ -166,7 +166,8 @@ namespace MongoRepository
         /// <param name="entity">The entity to delete.</param>
         public virtual void Delete(TModel entity)
         {
-            this.Delete(entity.Id);
+            var id =(TKey) Key.GetGetMethod().Invoke(entity, new object[] { });
+            this.Delete(id);
         }
 
         /// <summary>
@@ -177,7 +178,8 @@ namespace MongoRepository
         {
             foreach (TModel entity in this.collection.AsQueryable<TModel>().Where(predicate))
             {
-                this.Delete(entity.Id);
+                var id = (TKey)Key.GetGetMethod().Invoke(entity, new object[] { });
+                this.Delete(id);
             }
         }
 
@@ -331,8 +333,8 @@ namespace MongoRepository
         where TModel : IEntity<string>
     {
 
-        internal MongoRepository(string keyName, string collectionName)
-            : base(keyName, collectionName) { }
+        internal MongoRepository(PropertyInfo key, string collectionName)
+            : base(key, collectionName) { }
 
 
     }

@@ -66,12 +66,12 @@ namespace MongoRepository
             return MongoConfiguration.Section.Database;
         }
         public static MongoRepository<TKey, TModel> GetCollection<TKey, TModel>()
-            where TModel : IEntity<TKey>
+            //where TModel : IEntity<TKey>
         {
             return GetCollection<TKey, TModel>(string.Empty);
         }
         public static MongoRepository<TKey, TModel> GetCollection<TKey, TModel>(string name)
-             where TModel : IEntity<TKey>
+             //where TModel : IEntity<TKey>
         {
             logger.Debug(string.Format("Dynamic.GetCollection<{0},{1}>()", typeof(TKey).Name, typeof(TModel).Name));
             object value;
@@ -86,24 +86,30 @@ namespace MongoRepository
                     if (mongoModel != null)
                         collectionName = mongoModel.Name;
                 }
+                PropertyInfo key = null;
+                try
+                {
+                     key = typeof(TModel).GetProperties(BindingFlags.FlattenHierarchy | BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance).Where(prop => Attribute.IsDefined(prop, typeof(BsonIdAttribute))).First();
+                }
+                catch (InvalidOperationException ex)
+                {
 
-
-                PropertyInfo key = typeof(TModel).GetProperties(BindingFlags.FlattenHierarchy | BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance).Where(prop => Attribute.IsDefined(prop, typeof(BsonIdAttribute))).First();
-
-                var repo = new MongoRepository<TKey, TModel>(key.Name, collectionName);
+                }
+                key = key ?? typeof(TModel).GetProperty("Id");
+                var repo = new MongoRepository<TKey, TModel>(key, collectionName);
                 repositorories_[model] = repo;
             }
             return (MongoRepository<TKey, TModel>)repositorories_[model];
         }
 
         public static MongoRepository<string, TModel> GetCollection<TModel>()
-            where TModel : IEntity<string>
+           // where TModel : IEntity<string>
         {
             return GetCollection<string, TModel>(string.Empty);
         }
 
         public static MongoRepository<string, TModel> GetCollection<TModel>(string name)
-            where TModel : IEntity<string>
+            //where TModel : IEntity<string>
         {
             return GetCollection<string, TModel>();
         }

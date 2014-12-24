@@ -29,15 +29,15 @@ namespace MongoRepository
         {
             var repo = Repositories.GetCollection<TModel>();
 
-            ResetCounter(repo.KeyName, repo.CollectionName);
+            ResetCounter(repo.Key.Name, repo.CollectionName);
         }
 
 
-        internal static void ResetCounter<TKey,TModel>() where TModel : IEntity<TKey>
+        internal static void ResetCounter<TKey,TModel>() //where TModel : IEntity<TKey>
         {
             var repo = Repositories.GetCollection<TKey,TModel>();
 
-            ResetCounter(repo.KeyName, repo.CollectionName);
+            ResetCounter(repo.Key.Name, repo.CollectionName);
         }
 
         /// <summary>

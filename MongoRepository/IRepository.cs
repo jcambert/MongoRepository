@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace MongoRepository
 {
     public interface IRepository<T, TKey> : IQueryable<T>
-        where T : IEntity<TKey>
+        //where T : IEntity<TKey>
     {
         /// <summary>
         /// Gets the Mongo collection (to perform advanced operations).
@@ -127,6 +127,6 @@ namespace MongoRepository
     /// </summary>
     /// <typeparam name="T">The type contained in the repository.</typeparam>
     /// <remarks>Entities are assumed to use strings for Id's.</remarks>
-    public interface IRepository<T> : IQueryable<T>, IRepository<T, string>
-        where T : IEntity<string> { }
+    public interface IRepository<T> : IQueryable<T>, IRepository<T, string> { }
+       // where T : IEntity<string> { }
 }
