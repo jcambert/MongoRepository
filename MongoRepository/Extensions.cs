@@ -19,6 +19,11 @@ namespace MongoRepository
         {
             return Repositories.GetCollection<TModel>().Update(entity);
         }
+
+        public static void DeleteDocument<TModel>(this TModel entity) //where TModel : IEntity<string>
+        {
+             Repositories.GetCollection<TModel>().Delete(entity);
+        }
         #endregion
 
         #region String Extensions
